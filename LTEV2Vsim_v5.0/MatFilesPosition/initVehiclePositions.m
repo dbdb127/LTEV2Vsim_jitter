@@ -36,19 +36,25 @@ if simParams.typeOfScenario~=2 % Not traffic trace
     
     simValues.IDvehicle(:,1) = 1:Nvehicles;             % Vector of IDs
     simValues.maxID = Nvehicles;                        % Maximum vehicle's ID
+    
+    % author: kyungha kim
     % number of RSUs
     simValues.nRSU = floor(Nvehicles*simParams.RSUratio);
+    %end
     
     % Generate X coordinates of vehicles (uniform distribution)
     positionManagement.XvehicleReal = simValues.Xmax.*rand(Nvehicles,1);
     
     % Uniformly positioned
     % positionManagement.XvehicleReal = (1:Nvehicles)*floor(simValues.Xmax/(Nvehicles));
+    
+    % author: kyungha kim
     % Uniformly positioned RSU
     % substitute vehicles to RSU
     for i = 1:simValues.nRSU
         positionManagement.XvehicleReal(i) = i*floor(simValues.Xmax/simValues.nRSU);
     end
+    % end
     
     % Generate driving direction
     % 0 -> from left to right
@@ -84,7 +90,8 @@ if simParams.typeOfScenario~=2 % Not traffic trace
     % (not optimized, but used only once during initialization)
     % simValues.v = abs(vMeanMs + vStDevMs.*randn(Nvehicles,1));
     
-    % 속도 벡터 초기화
+    % author: kyungha kim
+    % 속도 벡터 설정
     simValues.v = zeros(Nvehicles,1);
     
     for i=1:Nvehicles
@@ -99,6 +106,7 @@ if simParams.typeOfScenario~=2 % Not traffic trace
             end
         end
     end
+    % end
     
     % Time resolution of position update corresponds to the beacon period
     simParams.positionTimeResolution = appParams.averageTbeacon;

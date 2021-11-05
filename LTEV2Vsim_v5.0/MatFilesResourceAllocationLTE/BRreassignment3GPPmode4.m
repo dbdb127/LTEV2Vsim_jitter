@@ -87,7 +87,8 @@ end
 % Cycle that updates per each vehicle and BR the knownUsedMatrix
 %  knownUsedMatrix = zeros(appParams.Nbeacons,simValues.maxID);
 
-% 전송할 기기가 vehicle일 때
+% author: kyungha kim
+% 전송한 기기가 vehicle일 때
 if ~isempty(stationManagement.transmittingIDsLTE(stationManagement.isRSU(stationManagement.transmittingIDsLTE)==0))     
     for i = 1:length(stationManagement.indexInActiveIDsOnlyLTE_OfTxLTE)
         if stationManagement.isRSU(stationManagement.transmittingIDsLTE(i))==1
@@ -121,7 +122,7 @@ if ~isempty(stationManagement.transmittingIDsLTE(stationManagement.isRSU(station
     end
 end
 
-% 전송할 기기가 RSU일 때
+% 전송한 기기가 RSU일 때
 if ~isempty(stationManagement.transmittingIDsLTE(stationManagement.isRSU(stationManagement.transmittingIDsLTE)==1))     
     for i = 1:length(stationManagement.indexInActiveIDsOnlyLTE_OfTxLTE)
         if stationManagement.isRSU(stationManagement.transmittingIDsLTE(i))==0
@@ -145,24 +146,21 @@ if ~isempty(stationManagement.transmittingIDsLTE(stationManagement.isRSU(station
            % than what sent in the SCI (means the value is not updated)
            % THEN the corresponding value of 'knownUsedMatrix' is updated
            if stationManagement.correctSCImatrixLTE(i,indexNeighborsOfVtx) == 1
-               nextBRT = ceil(BRtx/NbeaconsF);
-               nextPacketT = subframeNextPacket(idVtx);
-               if nextBRT > nextPacketT
-                   stationManagement.RSUreservation(10,BRtx,idVrx) = 1;
-               else
-                   stationManagement.RSUreservation(11,BRtx,idVrx) = 1;
-               end
+               stationManagement.RSUreservation(10,BRtx,idVrx) = 1;
            % NOTE: the SCI is here assumed to advertise the current value of the reselection
            % counter, which is an approximation of what in TS 36.213, Table 14.2.1-2
            end
         end
     end
 end
+% end
 
 %% Update the resReselectionCounter and evaluate which vehicles need reselection
 % Calculate scheduledID
 inTheLastSubframe = -1*ones(length(subframeNextPacket),1);
+% author: kyungha kim
 inTheLastSubframe(activeIdsLTE) = (subframeNextPacket(activeIdsLTE)==currentT) & (timeManagement.timeNow-timeManagement.timeLastPacket < 0.001);
+% end
 
 % Update resReselectionCounter
 % Reduce the counter by one to all those that have a packet generated in
@@ -179,6 +177,7 @@ stationManagement.resReselectionCounterLTE(activeIdsLTE) = stationManagement.res
 
 % Calculate IDs of vehicles which perform reselection
 scheduledID = find (stationManagement.resReselectionCounterLTE==0);
+% author: kyungha kim
 scheduledVehicle = scheduledID(stationManagement.isRSU(scheduledID)==0);
 scheduledRSU = scheduledID(stationManagement.isRSU(scheduledID)==1);
 
@@ -291,6 +290,7 @@ for i=1:length(scheduledRSU)
 end
 
 % %% jittering
+% % 이번 subframe에 전송한 vehicle들
 % toBeConsidered = activeIdsLTE(inTheLastSubframe(activeIdsLTE)==1);
 % toBeConsidered = toBeConsidered(stationManagement.isRSU(toBeConsidered)==0);
 % 
@@ -301,30 +301,22 @@ end
 % if ~isempty(toBeConsidered)
 %     for i = 1:length(toBeConsidered)
 %         % toBeConsidered의 BRid 정보
-%         BRid = stationManagement.BRid(toBeConsidered(i));
-%         BRidT = ceil(BRid/NbeaconsF);
+%         BRjitterId = stationManagement.BRid(toBeConsidered(i));
+%         BRjitterIdT = ceil(BRjitterId/NbeaconsF);
 %         
 %         % BRid가 겹치는 경우에만 jittering 실행
-%         if (BRidT > currentT && stationManagement.RSUreservation(1, BRid, toBeConsidered(i))==1) ||...
-%                 (BRidT <= currentT && stationManagement.RSUreservation(2, stationManagement.BRid(toBeConsidered(i)), toBeConsidered(i))==1)
+%         if (stationManagement.RSUreservation(1, BRjitterId, toBeConsidered(i))==1)
 % %             fprintf("collapse: %d %d \n", toBeConsidered(i),  stationManagement.BRid(toBeConsidered(i)));
 %         
-%             BRidF = mod(BRid-1,NbeaconsF)+1;
-% 
-%             BRjitterT = mod(BRidT+jitterMatrix-1, NbeaconsT)+1;
-%             BRjitter = (BRjitterT-1)*NbeaconsF+BRidF;
+%             BRjitterIdF = mod(BRjitterId-1,NbeaconsF)+1;
+%             BRjitterT = mod(BRjitterIdT+jitterMatrix-1, NbeaconsT)+1;
+%             BRjitter = (BRjitterT-1)*NbeaconsF+BRjitterIdF;
 %             RSSIjitter=stationManagement.sensingMatrixLTE(1, BRjitter, toBeConsidered(i));
 % 
 %             % 만일 누군가 예약했다면 inf로 설정
 %             for j = 1:length(BRjitter)
-%                 if BRjitterT(j) > currentT
-%                     if (stationManagement.RSUreservation(1, BRjitter(j), toBeConsidered(i))==1 || stationManagement.knownUsedMatrixLTE(BRjitter(j), toBeConsidered(i))>0)
-%                         RSSIjitter(j)=inf;
-%                     end
-%                 else
-%                     if (stationManagement.RSUreservation(2, BRjitter(j), toBeConsidered(i))==1 || stationManagement.knownUsedMatrixLTE(BRjitter(j), toBeConsidered(i))>0)
-%                         RSSIjitter(j)=inf;
-%                     end
+%                 if (stationManagement.RSUreservation(1, BRjitter(j), toBeConsidered(i))==1 || stationManagement.knownUsedMatrixLTE(BRjitter(j), toBeConsidered(i))>0)
+%                     RSSIjitter(j)=inf;
 %                 end
 %             end
 % 
@@ -335,6 +327,7 @@ end
 %         end
 %     end
 % end
+% % end
 
 % Reduce the knownUsedMatrix by 1 (not a problem if it goes below 0) for
 % those vehicles that have checked in this subframe if it is time to change

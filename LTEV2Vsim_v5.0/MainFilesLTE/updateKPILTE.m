@@ -18,19 +18,20 @@ function [stationManagement,outputValues,simValues] = updateKPILTE(activeIDsTXLT
 % 
 % Project: LTEV2Vsim
 % ==============
-
+% author: kyungha kim
 % 우선 tx가 vehicle인 것만 확인
-% activeIDsTXLTE = activeIDsTXLTE(stationManagement.isRSU(activeIDsTXLTE)==0);
-% indexInActiveIDsOnlyLTE= indexInActiveIDsOnlyLTE(stationManagement.isRSU(indexInActiveIDsOnlyLTE)==0);
+activeIDsTXLTE = activeIDsTXLTE(stationManagement.isRSU(activeIDsTXLTE)==0);
+indexInActiveIDsOnlyLTE= indexInActiveIDsOnlyLTE(stationManagement.isRSU(indexInActiveIDsOnlyLTE)==0);
 
 % rx 확인할 때는 RSU 고려x
 for tx = 1:length(activeIDsTXLTE)
     for rx = 1:length(neighborsID_LTE(activeIDsTXLTE(tx), :))
-        if neighborsID_LTE(activeIDsTXLTE(tx), rx) > 0 && stationManagement.isRSU(neighborsID_LTE(activeIDsTXLTE(tx), rx))==1
+        if (neighborsID_LTE(activeIDsTXLTE(tx), rx) > 0) && (stationManagement.isRSU(neighborsID_LTE(activeIDsTXLTE(tx), rx))==1)
             neighborsID_LTE(activeIDsTXLTE(tx), rx)=0;
         end
     end 
 end
+% end
 
 % Error detection (up to RawMax)
 errorMatrixRawMax = findErrors(activeIDsTXLTE,indexInActiveIDsOnlyLTE,neighborsID_LTE,sinrManagement,stationManagement,positionManagement,phyParams);

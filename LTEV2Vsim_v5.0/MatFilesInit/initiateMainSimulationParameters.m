@@ -45,11 +45,13 @@ if simParams.simulationTime<=0
     error('Error: "simParams.simulationTime" cannot be <= 0');
 end
 
+% author: kyungha kim
 % [RSU Ratio] 변수 추가
 [simParams, varargin] = addNewParam(simParams, 'RSUratio', 0.1, 'Ratio of RSUs among vehicles plus RSUs', 'double', fileCfg, varargin{1});
 if simParams.RSUratio < 0 || simParams.RSUratio >1
     error('Error: "simParams.RSUratio" cannot be <0 or >1');
 end
+%end
 
 % [Technology]
 % Choose if simulate LTE-V2V or 802.11p

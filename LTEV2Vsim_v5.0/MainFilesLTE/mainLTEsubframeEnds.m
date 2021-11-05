@@ -66,7 +66,17 @@ if ~isempty(stationManagement.transmittingIDsLTE)
     %% KPIs Computation (Snapshot)
     [stationManagement,outputValues,simValues] = updateKPILTE(activeIDsTXLTE,indexInActiveIDsOnlyLTE,awarenessID_LTE,neighborsID_LTE,timeManagement,stationManagement,positionManagement,sinrManagement,outputValues,outParams,simParams,appParams,phyParams,simValues);
 
-end 
+end
+
+%% RSUreservation update
+% author: kyungha kim
+currentT = mod(timeManagement.elapsedTime_subframes-1,appParams.NbeaconsT)+1;
+BRids_currentSF = ((currentT-1)*appParams.NbeaconsF+1):(currentT*appParams.NbeaconsF);
+for i = 1:length(BRids_currentSF)
+    stationManagement.RSUreservation(:, BRids_currentSF(i), :) = circshift(stationManagement.RSUreservation(:, BRids_currentSF(i), :),10);
+end
+stationManagement.RSUreservation(11, BRids_currentSF(i), :) = 0;
+% end
 
 Nreassign = 0;
 if simParams.BRAlgorithm==18

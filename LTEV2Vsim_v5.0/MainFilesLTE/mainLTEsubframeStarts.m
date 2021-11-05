@@ -31,10 +31,12 @@ BRidT(stationManagement.BRid<=0)=-1;
 % Find IDs of vehicles that are currently transmitting
 stationManagement.transmittingIDsLTE = find(BRidT == (mod((timeManagement.elapsedTime_subframes-1),appParams.NbeaconsT)+1));
 
-% RSU일 경우 진짜 transmit할 때가 맞는지 확인(전송 주기가 다름)
+% authore: kyungha kim
+% packet이 생성되었는지 확인(특히 RSU, 전송 주기가 다름)
 % 만일 transmit 시간이 아니라면 packet이 generate 안됨
-txOK = find((timeManagement.timeNow - timeManagement.timeLastPacket(stationManagement.transmittingIDsLTE)) < 0.1);
+txOK = find((timeManagement.timeLastPacket(stationManagement.transmittingIDsLTE) > 0) & ((timeManagement.timeNow - timeManagement.timeLastPacket(stationManagement.transmittingIDsLTE)) < 0.1));
 stationManagement.transmittingIDsLTE = stationManagement.transmittingIDsLTE(txOK);
+% end
 
 if ~isempty(stationManagement.transmittingIDsLTE)     
     % Find index of vehicles that are currently transmitting
@@ -50,13 +52,16 @@ if ~isempty(stationManagement.transmittingIDsLTE)
     end
 end
 
-% 새로운 subframe이 시작하므로 renew RSU reservation
-if rem(timeManagement.elapsedTime_subframes,appParams.NbeaconsT)==1
-    for i = 1:appParams.Nbeacons
-        stationManagement.RSUreservation(:, i, :) = circshift(stationManagement.RSUreservation(:, i, :),10);
-    end
-end
-stationManagement.RSUreservation(11, :, :) = 0;
+% % author: kyungha kim
+% % 새로운 subframe이 시작하므로 renew RSU reservation
+% nowT = mod(timeManagement.elapsedTime_subframes-1,appParams.NbeaconsT)+1;
+% 
+%     for i = 1:appParams.Nbeacons
+%         stationManagement.RSUreservation(:, i, :) = circshift(stationManagement.RSUreservation(:, i, :),10);
+%     end
+% end
+% stationManagement.RSUreservation(11, :, :) = 0;
+% % end
 
 % Initialization of the received power
 [sinrManagement] = initLastPowerLTE(timeManagement,stationManagement,sinrManagement,simParams,appParams,phyParams);
