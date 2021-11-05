@@ -37,7 +37,7 @@ if simParams.typeOfScenario~=2 % Not traffic trace
     simValues.IDvehicle(:,1) = 1:Nvehicles;             % Vector of IDs
     simValues.maxID = Nvehicles;                        % Maximum vehicle's ID
     
-    % author: kyungha kim
+    % author: kyungha kim 
     % number of RSUs
     simValues.nRSU = floor(Nvehicles*simParams.RSUratio);
     %end

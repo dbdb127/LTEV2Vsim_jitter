@@ -52,7 +52,7 @@ if ~isempty(stationManagement.transmittingIDsLTE)
     end
 end
 
-% % author: kyungha kim
+% % author: kyungha kim 
 % % 새로운 subframe이 시작하므로 renew RSU reservation
 % nowT = mod(timeManagement.elapsedTime_subframes-1,appParams.NbeaconsT)+1;
 % 

@@ -87,7 +87,7 @@ end
 % Cycle that updates per each vehicle and BR the knownUsedMatrix
 %  knownUsedMatrix = zeros(appParams.Nbeacons,simValues.maxID);
 
-% author: kyungha kim
+% author: kyungha kim 
 % 전송한 기기가 vehicle일 때
 if ~isempty(stationManagement.transmittingIDsLTE(stationManagement.isRSU(stationManagement.transmittingIDsLTE)==0))     
     for i = 1:length(stationManagement.indexInActiveIDsOnlyLTE_OfTxLTE)

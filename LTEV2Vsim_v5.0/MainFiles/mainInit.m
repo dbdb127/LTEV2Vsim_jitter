@@ -85,7 +85,7 @@ outputValues.NvehiclesLTE = outputValues.NvehiclesLTE + length(stationManagement
 outputValues.Nvehicles11p = outputValues.Nvehicles11p + length(stationManagement.activeIDs11p);
 
 %% Initialize for RSU
-% author: kyungha kim
+% author: kyungha kim 
 % is RSU
 stationManagement.isRSU = zeros(simValues.maxID,1);
 for i = 1:simValues.nRSU

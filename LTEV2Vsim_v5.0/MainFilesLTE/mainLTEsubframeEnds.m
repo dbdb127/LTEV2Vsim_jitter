@@ -69,7 +69,7 @@ if ~isempty(stationManagement.transmittingIDsLTE)
 end
 
 %% RSUreservation update
-% author: kyungha kim
+% author: kyungha kim 
 currentT = mod(timeManagement.elapsedTime_subframes-1,appParams.NbeaconsT)+1;
 BRids_currentSF = ((currentT-1)*appParams.NbeaconsF+1):(currentT*appParams.NbeaconsF);
 for i = 1:length(BRids_currentSF)

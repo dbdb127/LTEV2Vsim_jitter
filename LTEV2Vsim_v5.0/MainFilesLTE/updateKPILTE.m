@@ -18,7 +18,7 @@ function [stationManagement,outputValues,simValues] = updateKPILTE(activeIDsTXLT
 % 
 % Project: LTEV2Vsim
 % ==============
-% author: kyungha kim
+% author: kyungha kim 
 % 우선 tx가 vehicle인 것만 확인
 activeIDsTXLTE = activeIDsTXLTE(stationManagement.isRSU(activeIDsTXLTE)==0);
 indexInActiveIDsOnlyLTE= indexInActiveIDsOnlyLTE(stationManagement.isRSU(indexInActiveIDsOnlyLTE)==0);
