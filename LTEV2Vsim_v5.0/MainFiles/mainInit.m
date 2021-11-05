@@ -85,6 +85,7 @@ outputValues.NvehiclesLTE = outputValues.NvehiclesLTE + length(stationManagement
 outputValues.Nvehicles11p = outputValues.Nvehicles11p + length(stationManagement.activeIDs11p);
 
 %% Initialize for RSU
+% author: kyungha kim
 % is RSU
 stationManagement.isRSU = zeros(simValues.maxID,1);
 for i = 1:simValues.nRSU
@@ -92,6 +93,7 @@ for i = 1:simValues.nRSU
 end
 stationManagement.nextBRforRSU = zeros(simValues.nRSU,1);
 stationManagement.RSUreservation = zeros(11, appParams.Nbeacons, simValues.maxID);
+% end
 
 %% Initialization of packets management 
 % Number of packets in the queue of each node
@@ -100,14 +102,17 @@ stationManagement.nPackets = zeros(simValues.maxID,1);
 % Packet generation
 timeManagement.timeNextPacket = Inf * ones(simValues.maxID,1);
 timeManagement.timeNextPacket(simValues.IDvehicle) = appParams.averageTbeacon * rand(length(simValues.IDvehicle),1);
+% author: kyungha kim
 % RSU의 timeNextPacket 수정(beaconPeriod가 다름) 
 timeManagement.timeNextPacket(simValues.IDvehicle(stationManagement.isRSU==1)) = rand(length(simValues.IDvehicle(stationManagement.isRSU==1)),1);
+% end
 timeManagement.timeLastPacket = -1 * ones(simValues.maxID,1); % needed for the calculation of the CBR
 timeManagement.beaconPeriod = appParams.averageTbeacon - appParams.variabilityTbeacon/2 + appParams.variabilityTbeacon*rand(simValues.maxID,1);
 timeManagement.beaconPeriod(stationManagement.activeIDsLTE) = appParams.averageTbeacon;
+% author: kyungha kim
 % RSU의 beaconPeriod 수정 
 timeManagement.beaconPeriod(stationManagement.activeIDsLTE(stationManagement.isRSU==1)) = 1;
-
+% end
 %% Initialize propagation
 % Tx power vectors
 if isfield(phyParams,'P_ERP_MHz_LTE')
@@ -290,9 +295,12 @@ end % end of not only LTE
 % Initialize the beacon resource used by each vehicle
 stationManagement.BRid = -2*ones(simValues.maxID,1);
 stationManagement.BRid(simValues.IDvehicle) = -1;
+
+% author: kyungha kim
 % jiterring 하기 전 BRid
 stationManagement.BRidOrigin = zeros(simValues.maxID, 1);
-%
+% end
+
 % Initialize next LTE event to inf
 timeManagement.timeNextLTE = inf;
 %
@@ -314,8 +322,12 @@ if simParams.technology ~= 2 % not only 11p
         % Initialize reselection counter (BRAlgorithm=18)
         stationManagement.resReselectionCounterLTE = Inf*ones(simValues.maxID,1);
         stationManagement.resReselectionCounterLTE(stationManagement.activeIDs) = (simParams.minRandValueMode4-1) + randi((simParams.maxRandValueMode4-simParams.minRandValueMode4)+1,1,length(simValues.IDvehicle));
+       
+        % author: kyungha kim
         % RSU의 resReselectionCounterLTE을 1로 설정
         stationManagement.resReselectionCounterLTE(stationManagement.activeIDs(stationManagement.isRSU == 1)) = 1;
+        % end
+        
         % COMMENTED: Set value 0 to vehicles that are blocked
         % stationManagement.resReselectionCounterLTE(stationManagement.BRid==-1)=0;
 
@@ -325,9 +337,12 @@ if simParams.technology ~= 2 % not only 11p
 
         % First random allocation 
         [stationManagement.BRid,~] = BRreassignmentRandom(simValues.IDvehicle,stationManagement.BRid,appParams.Nbeacons,simParams,appParams);
+        
+        % author: kyungha kim
         % RSU의 nextBR 할당
         [stationManagement.nextBRforRSU, ~] = BRreassignmentRandom(simValues.IDvehicle(stationManagement.isRSU==1), stationManagement.nextBRforRSU, appParams.Nbeacons, simParams, appParams);
         stationManagement.BRidOrigin = stationManagement.BRid;
+        % end
         
         % vector correctSCImatrixLTE created
         stationManagement.correctSCImatrixLTE = [];

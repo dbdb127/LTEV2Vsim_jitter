@@ -206,7 +206,9 @@ end
 timeManagement.timeNextPacket(stationManagement.activeIDs(indexNewVehicles)) = timeManagement.timeNow + appParams.averageTbeacon * rand(1,length(indexNewVehicles));
 timeManagement.beaconPeriod(stationManagement.activeIDs(indexNewVehicles)) = appParams.averageTbeacon - appParams.variabilityTbeacon/2 + appParams.variabilityTbeacon*rand(length(indexNewVehicles),1);
 timeManagement.beaconPeriod(stationManagement.activeIDsLTE) = appParams.averageTbeacon;
+% author: kyungha kim
 timeManagement.beaconPeriod(stationManagement.isRSU==1) = 1;
+% end
 % Reset time next packet and tx-rx for vehicles that exit the scenario
 timeManagement.timeNextPacket(stationManagement.activeIDsExit) = Inf;
 
