@@ -289,45 +289,45 @@ for i=1:length(scheduledRSU)
     stationManagement.nextBRforRSU(scheduledRSU(i))=randi(Nbeacons);
 end
 
-% %% jittering
-% % 이번 subframe에 전송한 vehicle들
-% toBeConsidered = activeIdsLTE(inTheLastSubframe(activeIdsLTE)==1);
-% toBeConsidered = toBeConsidered(stationManagement.isRSU(toBeConsidered)==0);
-% 
-% stationManagement.BRid(toBeConsidered)=stationManagement.BRidOrigin(toBeConsidered);
-% 
-% jitterMatrix=[-2 -1 1 2].';
-% 
-% if ~isempty(toBeConsidered)
-%     for i = 1:length(toBeConsidered)
-%         % toBeConsidered의 BRid 정보
-%         BRjitterId = stationManagement.BRid(toBeConsidered(i));
-%         BRjitterIdT = ceil(BRjitterId/NbeaconsF);
-%         
-%         % BRid가 겹치는 경우에만 jittering 실행
-%         if (stationManagement.RSUreservation(1, BRjitterId, toBeConsidered(i))==1)
-% %             fprintf("collapse: %d %d \n", toBeConsidered(i),  stationManagement.BRid(toBeConsidered(i)));
-%         
-%             BRjitterIdF = mod(BRjitterId-1,NbeaconsF)+1;
-%             BRjitterT = mod(BRjitterIdT+jitterMatrix-1, NbeaconsT)+1;
-%             BRjitter = (BRjitterT-1)*NbeaconsF+BRjitterIdF;
-%             RSSIjitter=stationManagement.sensingMatrixLTE(1, BRjitter, toBeConsidered(i));
-% 
-%             % 만일 누군가 예약했다면 inf로 설정
-%             for j = 1:length(BRjitter)
-%                 if (stationManagement.RSUreservation(1, BRjitter(j), toBeConsidered(i))==1 || stationManagement.knownUsedMatrixLTE(BRjitter(j), toBeConsidered(i))>0)
-%                     RSSIjitter(j)=inf;
-%                 end
-%             end
-% 
-%             [minRSSI, minIdx] = min(RSSIjitter);
-%             if minRSSI~=inf
-%                 stationManagement.BRid(toBeConsidered(i))=BRjitter(minIdx);
-%             end
-%         end
-%     end
+%% jittering
+% 이번 subframe에 전송한 vehicle들
+toBeConsidered = activeIdsLTE(inTheLastSubframe(activeIdsLTE)==1);
+toBeConsidered = toBeConsidered(stationManagement.isRSU(toBeConsidered)==0);
+
+stationManagement.BRid(toBeConsidered)=stationManagement.BRidOrigin(toBeConsidered);
+
+jitterMatrix=[-2 -1 1 2].';
+
+if ~isempty(toBeConsidered)
+    for i = 1:length(toBeConsidered)
+        % toBeConsidered의 BRid 정보
+        BRjitterId = stationManagement.BRid(toBeConsidered(i));
+        BRjitterIdT = ceil(BRjitterId/NbeaconsF);
+        
+        % BRid가 겹치는 경우에만 jittering 실행
+        if (stationManagement.RSUreservation(1, BRjitterId, toBeConsidered(i))==1)
+%             fprintf("collapse: %d %d \n", toBeConsidered(i),  stationManagement.BRid(toBeConsidered(i)));
+        
+            BRjitterIdF = mod(BRjitterId-1,NbeaconsF)+1;
+            BRjitterT = mod(BRjitterIdT+jitterMatrix-1, NbeaconsT)+1;
+            BRjitter = (BRjitterT-1)*NbeaconsF+BRjitterIdF;
+            RSSIjitter=stationManagement.sensingMatrixLTE(1, BRjitter, toBeConsidered(i));
+
+            % 만일 누군가 예약했다면 inf로 설정
+            for j = 1:length(BRjitter)
+                if (stationManagement.RSUreservation(1, BRjitter(j), toBeConsidered(i))==1 || stationManagement.knownUsedMatrixLTE(BRjitter(j), toBeConsidered(i))>0)
+                    RSSIjitter(j)=inf;
+                end
+            end
+
+            [minRSSI, minIdx] = min(RSSIjitter);
+            if minRSSI~=inf
+                stationManagement.BRid(toBeConsidered(i))=BRjitter(minIdx);
+            end
+        end
+    end
+end
 % end
-% % end
 
 % Reduce the knownUsedMatrix by 1 (not a problem if it goes below 0) for
 % those vehicles that have checked in this subframe if it is time to change
